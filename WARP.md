@@ -1,53 +1,56 @@
 # WARP.md
 
-This file provides guidance to WARP (warp.dev) when working with code in this repository.
+このファイルはWARP（warp.dev）がこのリポジトリで作業する際のガイダンスを提供します。
 
-## What this repo is
-This repository is a **Claude Code skill** implemented entirely as Markdown.
+## このリポジトリについて
+このリポジトリは**Claude Codeスキル**で、すべてMarkdownで実装されています。
 
-The “runtime” artifact is `SKILL.md`: Claude Code reads the YAML frontmatter (metadata + allowed tools) and the prompt/instructions that follow.
+「ランタイム」となる成果物は `SKILL.md` です。Claude CodeはYAMLフロントマター（メタデータと許可ツール）およびその後に続くプロンプト/指示を読み込みます。
 
-`README.md` is for humans: installation, usage, and a compact overview of the patterns.
+`README.md` は人間向けです: インストール方法、使い方、パターンの概要が記載されています。
 
-## Key files (and how they relate)
+## 主要ファイル（相互関係）
 - `SKILL.md`
-  - The actual skill definition.
-  - Starts with YAML frontmatter (`---` … `---`) containing `name`, `version`, `description`, and `allowed-tools`.
-  - After the frontmatter is the editor prompt: the canonical, detailed pattern list with examples.
+  - 実際のスキル定義。
+  - `name`（humanizer-ja）、`version`（3.0.0）、`description`、`allowed-tools` を含むYAMLフロントマター（`---` … `---`）で始まる。
+  - フロントマターの後は編集者プロンプト: 20パターンのリストとBefore/After例。
 - `README.md`
-  - Installation and usage instructions.
-  - Contains a summarized “25 patterns” table and a short version history.
+  - インストール・使用方法の説明。
+  - 20パターンのサマリーテーブルとバージョン履歴を含む。
 
-When changing behavior/content, treat `SKILL.md` as the source of truth, and update `README.md` to stay consistent.
+動作/内容を変更する場合、`SKILL.md` を信頼できる唯一の情報源として扱い、`README.md` を整合性を保って更新してください。
 
-## Common commands
-### Install the skill into Claude Code
-Recommended (clone directly into Claude Code skills directory):
+## よく使うコマンド
+
+### Claude Codeへのスキルインストール
+推奨（Claude Codeスキルディレクトリに直接クローン）:
 ```bash
 mkdir -p ~/.claude/skills
-git clone https://github.com/blader/humanizer.git ~/.claude/skills/humanizer
+git clone https://github.com/m0370/humanizer-ja.git ~/.claude/skills/humanizer-ja
 ```
 
-Manual install/update (only the skill file):
+手動インストール/更新（スキルファイルのみ）:
 ```bash
-mkdir -p ~/.claude/skills/humanizer
-cp SKILL.md ~/.claude/skills/humanizer/
+mkdir -p ~/.claude/skills/humanizer-ja
+cp SKILL.md ~/.claude/skills/humanizer-ja/
 ```
 
-## How to “run” it (Claude Code)
-Invoke the skill:
-- `/humanizer` then paste text
+## スキルの「実行」方法（Claude Code）
+スキルを呼び出す:
+- `/humanizer-ja` と入力してテキストを貼り付ける
 
-## Making changes safely
-### Versioning (keep in sync)
-- `SKILL.md` has a `version:` field in its YAML frontmatter.
-- `README.md` has a “Version History” section.
+## 安全な変更方法
 
-If you bump the version, update both.
+### バージョン管理（同期を保つ）
+- `SKILL.md` のYAMLフロントマターに `version:` フィールドがある。
+- `README.md` に「バージョン履歴」セクションがある。
 
-### Editing `SKILL.md`
-- Preserve valid YAML frontmatter formatting and indentation.
-- Keep the pattern numbering stable unless you’re intentionally re-numbering (since the README table and examples reference the same numbering).
+バージョンを上げる場合は両方を更新すること。
 
-### Documenting non-obvious fixes
-If you change the prompt to handle a tricky failure mode (e.g., a repeated mis-edit or an unexpected tone shift), add a short note to `README.md`’s version history describing what was fixed and why.
+### `SKILL.md` の編集
+- 有効なYAMLフロントマットの書式とインデントを保持すること。
+- パターン番号付けを意図的に変更する場合を除き安定させること（READMEのテーブルと例が同じ番号を参照しているため）。
+- 現在は20パターン（日本語特化）。英語固有パターンは削除済み。
+
+### 自明でない修正のドキュメント化
+プロンプトを変更してトリッキーな失敗ケース（繰り返しの誤編集や予期しないトーンの変化など）に対応した場合は、何を修正しどこが問題だったかを説明する短いノートを `README.md` のバージョン履歴に追加すること。

@@ -1,194 +1,210 @@
-# Humanizer
+# Humanizer-JA
 
-A skill for Claude Code and OpenCode that removes signs of AI-generated writing from text, making it sound more natural and human.
+Claude CodeおよびOpenCode向けのスキルで、日本語テキストからAI生成の痕跡を検出・除去し、より自然で人間らしい文章に修正します。
 
-## Installation
+## インストール
 
 ### Claude Code
 
-Clone directly into Claude Code's skills directory:
+Claude Codeのスキルディレクトリに直接クローン:
 
 ```bash
 mkdir -p ~/.claude/skills
-git clone https://github.com/blader/humanizer.git ~/.claude/skills/humanizer
+git clone https://github.com/m0370/humanizer-ja.git ~/.claude/skills/humanizer-ja
 ```
 
-Or copy the skill file manually if you already have this repo cloned:
+すでにこのリポジトリをクローン済みの場合は手動でコピー:
 
 ```bash
-mkdir -p ~/.claude/skills/humanizer
-cp SKILL.md ~/.claude/skills/humanizer/
+mkdir -p ~/.claude/skills/humanizer-ja
+cp SKILL.md ~/.claude/skills/humanizer-ja/
 ```
 
 ### OpenCode
 
-Clone directly into OpenCode's skills directory:
+OpenCodeのスキルディレクトリに直接クローン:
 
 ```bash
 mkdir -p ~/.config/opencode/skills
-git clone https://github.com/blader/humanizer.git ~/.config/opencode/skills/humanizer
+git clone https://github.com/m0370/humanizer-ja.git ~/.config/opencode/skills/humanizer-ja
 ```
 
-Or copy the skill file manually if you already have this repo cloned:
+すでにこのリポジトリをクローン済みの場合は手動でコピー:
 
 ```bash
-mkdir -p ~/.config/opencode/skills/humanizer
-cp SKILL.md ~/.config/opencode/skills/humanizer/
+mkdir -p ~/.config/opencode/skills/humanizer-ja
+cp SKILL.md ~/.config/opencode/skills/humanizer-ja/
 ```
 
-> **Note:** OpenCode also scans `~/.claude/skills/` for compatibility, so a single clone into `~/.claude/skills/humanizer/` works for both tools.
+> **Note:** OpenCodeは `~/.claude/skills/` もスキャンするため、`~/.claude/skills/humanizer-ja/` への一度のクローンで両方のツールで動作します。
 
-## Usage
+## 使い方
 
 ### Claude Code
 
 ```
-/humanizer
+/humanizer-ja
 
-[paste your text here]
+[修正したいテキストをここに貼り付け]
 ```
 
 ### OpenCode
 
 ```
-/humanizer
+/humanizer-ja
 
-[paste your text here]
+[修正したいテキストをここに貼り付け]
 ```
 
-Or ask the model to humanize text directly in either tool:
+または、どちらのツールでも直接依頼:
 
 ```
-Please humanize this text: [your text]
+このテキストを人間らしくしてください: [テキスト]
 ```
 
-### Voice Calibration
+### 声のキャリブレーション
 
-To match your personal writing style, provide a sample of your own writing:
+自分の文体に合わせて修正したい場合、自分が書いた文章サンプルを提供する:
 
 ```
-/humanizer
+/humanizer-ja
 
-Here's a sample of my writing for voice matching:
-[paste 2-3 paragraphs of your own writing]
+私の文体サンプル:
+[自分が書いた2〜3段落を貼り付け]
 
-Now humanize this text:
-[paste AI text to humanize]
+このテキストを人間らしくしてください:
+[AI生成テキストを貼り付け]
 ```
 
-The skill will analyze your sentence rhythm, word choices, and quirks, then apply them to the rewrite instead of producing generic "clean" output.
+スキルが文の長さのリズム、語彙選択、文末パターンの癖を分析し、汎用的な「クリーン」出力ではなく、あなたの文体に合わせて書き換えます。
 
-## Overview
+## 概要
 
-Based on [Wikipedia's "Signs of AI writing"](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) guide, maintained by WikiProject AI Cleanup. This comprehensive guide comes from observations of thousands of instances of AI-generated text.
+[Wikipedia「AI生成文の特徴」](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing)ページおよびZenn記事（[m0370氏「humanizer をベースに日本語向けの設定に改良した話」](https://zenn.dev/m0370/articles/205c9340a418c3)）をベースに、日本語に特化した20のパターンを検出・修正します。
 
-The skill also includes a final "obviously AI generated" audit pass and a second rewrite, to catch lingering AI-isms in the first draft.
+また、最終的な「AIっぽいか確認する」監査パスと二度目の書き換えにより、初稿に残ったAI的特徴を取り除きます。
 
-### Key Insight from Wikipedia
+### Wikipediaからの重要な知見
 
-> "LLMs use statistical algorithms to guess what should come next. The result tends toward the most statistically likely result that applies to the widest variety of cases."
+> 「LLMは統計アルゴリズムを使って次に来るべき内容を予測する。その結果は、最も幅広いケースに当てはまる最も統計的に可能性の高い結果に向かう傾向がある。」
 
-## 29 Patterns Detected (with Before/After Examples)
+## 20のパターン（Before/After例付き）
 
-### Content Patterns
+### 内容パターン
 
-| # | Pattern | Before | After |
+| # | パターン | 修正前 | 修正後 |
 |---|---------|--------|-------|
-| 1 | **Significance inflation** | "marking a pivotal moment in the evolution of..." | "was established in 1989 to collect regional statistics" |
-| 2 | **Notability name-dropping** | "cited in NYT, BBC, FT, and The Hindu" | "In a 2024 NYT interview, she argued..." |
-| 3 | **Superficial -ing analyses** | "symbolizing... reflecting... showcasing..." | Remove or expand with actual sources |
-| 4 | **Promotional language** | "nestled within the breathtaking region" | "is a town in the Gonder region" |
-| 5 | **Vague attributions** | "Experts believe it plays a crucial role" | "according to a 2019 survey by..." |
-| 6 | **Formulaic challenges** | "Despite challenges... continues to thrive" | Specific facts about actual challenges |
+| 1 | **意義の過剰な強調** | 「地域統計の歴史における重要な転換点となりました」 | 「地域統計を集計・公表するために設立されました」 |
+| 2 | **注目度・メディア言及の過剰強調** | 「多くのメディアで取り上げられ、各方面から注目を集め」 | 「2024年のインタビューで〜と主張しました」 |
+| 3 | **曖昧な出典への言及** | 「専門家によると〜とされています」 | 「中国科学院の2019年調査によると」 |
+| 4 | **宣伝的・広告的な表現** | 「魅力的な自然環境に囲まれた、息をのむような景観」 | 「週市と18世紀建立の神社で知られています」 |
+| 5 | **定型的な「課題と展望」セクション** | 「課題はあるものの、今後の発展が期待されます」 | 具体的な課題と取り組みの事実 |
+| 6 | **三点セットの強制** | 「速度・品質・信頼性の三点において」 | 実際の数で列挙 |
 
-### Language Patterns
+### 語彙・文法パターン
 
-| # | Pattern | Before | After |
+| # | パターン | 修正前 | 修正後 |
 |---|---------|--------|-------|
-| 7 | **AI vocabulary** | "Actually... additionally... testament... landscape... showcasing" | "also... remain common" |
-| 8 | **Copula avoidance** | "serves as... features... boasts" | "is... has" |
-| 9 | **Negative parallelisms / tailing negations** | "It's not just X, it's Y", "..., no guessing" | State the point directly |
-| 10 | **Rule of three** | "innovation, inspiration, and insights" | Use natural number of items |
-| 11 | **Synonym cycling** | "protagonist... main character... central figure... hero" | "protagonist" (repeat when clearest) |
-| 12 | **False ranges** | "from the Big Bang to dark matter" | List topics directly |
-| 13 | **Passive voice / subjectless fragments** | "No configuration file needed" | Name the actor when it helps clarity |
+| 7 | **AI頻出語彙（日本語版）** | 「さらに」「加えて」「特筆すべきは」「〜において」 | 具体的でシンプルな表現 |
+| 8 | **過剰な接続詞の連鎖** | 「また〜。さらに〜。加えて〜。」が規則的に続く | 自然な接続または省略 |
+| 9 | **回りくどい繋辞（コピュラ回避）** | 「〜として位置づけられています」「〜を担っています」 | 「〜です」「〜があります」 |
+| 10 | **同義語の無意味な循環** | 「課題」「問題点」「懸念事項」「論点」と言い換え | 一語を使い続ける |
+| 11 | **〜ing的な付け足し構文** | 「〜を浮き彫りにしており」「〜を示唆しています」 | 除去、または出典付きで展開 |
 
-### Style Patterns
+### スタイルパターン
 
-| # | Pattern | Before | After |
+| # | パターン | 修正前 | 修正後 |
 |---|---------|--------|-------|
-| 14 | **Em dash overuse** | "institutions—not the people—yet this continues—" | Prefer commas or periods |
-| 15 | **Boldface overuse** | "**OKRs**, **KPIs**, **BMC**" | "OKRs, KPIs, BMC" |
-| 16 | **Inline-header lists** | "**Performance:** Performance improved" | Convert to prose |
-| 17 | **Title Case Headings** | "Strategic Negotiations And Partnerships" | "Strategic negotiations and partnerships" |
-| 18 | **Emojis** | "🚀 Launch Phase: 💡 Key Insight:" | Remove emojis |
-| 19 | **Curly quotes** | `said “the project”` | `said “the project”` |
-| 26 | **Hyphenated word pairs** | “cross-functional, data-driven, client-facing” | Drop hyphens on common word pairs |
-| 27 | **Persuasive authority tropes** | "At its core, what matters is..." | State the point directly |
-| 28 | **Signposting announcements** | "Let's dive in", "Here's what you need to know" | Start with the content |
-| 29 | **Fragmented headers** | "## Performance" + "Speed matters." | Let the heading do the work |
+| 12 | **ダッシュ類の使用** | 全角ダッシュ（――）の多用 | 読点や句点に置き換え |
+| 13 | **太字の機械的多用** | 「**OKR**と**KPI**と**BSC**を組み合わせ」 | 「OKRとKPIとBSCを組み合わせ」 |
+| 14 | **インラインヘッダー付き箇条書き** | 「- **速度:** コード生成が高速化」 | 散文に変換 |
+| 15 | **絵文字の装飾的使用** | 「🚀 ローンチフェーズ: 💡 重要な知見:」 | 絵文字を除去 |
 
-### Communication Patterns
+### コミュニケーションパターン
 
-| # | Pattern | Before | After |
+| # | パターン | 修正前 | 修正後 |
 |---|---------|--------|-------|
-| 20 | **Chatbot artifacts** | "I hope this helps! Let me know if..." | Remove entirely |
-| 21 | **Cutoff disclaimers** | "While details are limited in available sources..." | Find sources or remove |
-| 22 | **Sycophantic tone** | "Great question! You're absolutely right!" | Respond directly |
+| 16 | **チャットボット残留表現** | 「お役に立てれば幸いです！ご質問があればお気軽に」 | 完全に除去 |
+| 17 | **知識カットオフの注意書き** | 「公開情報が限られているため確実ではありませんが」 | 出典を探すか除去 |
+| 18 | **追従的・お世辞的トーン** | 「素晴らしいご質問ですね！おっしゃる通りです」 | 直接的に答える |
 
-### Filler and Hedging
+### 冗長表現・ヘッジング
 
-| # | Pattern | Before | After |
+| # | パターン | 修正前 | 修正後 |
 |---|---------|--------|-------|
-| 23 | **Filler phrases** | "In order to", "Due to the fact that" | "To", "Because" |
-| 24 | **Excessive hedging** | "could potentially possibly" | "may" |
-| 25 | **Generic conclusions** | "The future looks bright" | Specific plans or facts |
+| 19 | **過剰なヘッジング・定型結論** | 「今後の展開が注目されます」「〜ではないでしょうか」 | 具体的な事実か削除 |
+| 20 | **カタカナ語の過剰使用** | 「イノベーション・ソリューション・ステークホルダー」 | 「革新・解決策・関係者」等（定着語は除く） |
 
-## Full Example
+## 全体の例
 
-**Before (AI-sounding):**
-> Great question! Here is an essay on this topic. I hope this helps!
+**修正前（AI生成臭い文章）:**
+> 素晴らしいご質問ですね！AIコーディング支援について以下にまとめます。
 >
-> AI-assisted coding serves as an enduring testament to the transformative potential of large language models, marking a pivotal moment in the evolution of software development. In today's rapidly evolving technological landscape, these groundbreaking tools—nestled at the intersection of research and practice—are reshaping how engineers ideate, iterate, and deliver, underscoring their vital role in modern workflows.
+> AIコーディング支援は、ソフトウェア開発の歴史における重要な転換点として位置づけられています。さらに、この画期的なテクノロジーは、開発者の生産性向上に大きく貢献しており、多くの専門家から注目を集めています。イノベーション・ソリューション・ステークホルダーへの価値提供という観点において、非常に重要な役割を担っています。
 >
-> At its core, the value proposition is clear: streamlining processes, enhancing collaboration, and fostering alignment. It's not just about autocomplete; it's about unlocking creativity at scale, ensuring that organizations can remain agile while delivering seamless, intuitive, and powerful experiences to users. The tool serves as a catalyst. The assistant functions as a partner. The system stands as a foundation for innovation.
+> - 🚀 **速度:** コード生成が大幅に高速化し、開発者の負担を軽減します。
+> - 💡 **品質:** 出力品質が向上しています。
+> - ✅ **採用:** 利用者数は増加傾向にあります。
 >
-> Industry observers have noted that adoption has accelerated from hobbyist experiments to enterprise-wide rollouts, from solo developers to cross-functional teams. The technology has been featured in The New York Times, Wired, and The Verge. Additionally, the ability to generate documentation, tests, and refactors showcases how AI can contribute to better outcomes, highlighting the intricate interplay between automation and human judgment.
->
-> - 💡 **Speed:** Code generation is significantly faster, reducing friction and empowering developers.
-> - 🚀 **Quality:** Output quality has been enhanced through improved training, contributing to higher standards.
-> - ✅ **Adoption:** Usage continues to grow, reflecting broader industry trends.
->
-> While specific details are limited based on available information, it could potentially be argued that these tools might have some positive effect. Despite challenges typical of emerging technologies—including hallucinations, bias, and accountability—the ecosystem continues to thrive. In order to fully realize this potential, teams must align with best practices.
->
-> In conclusion, the future looks bright. Exciting times lie ahead as we continue this journey toward excellence. Let me know if you’d like me to expand on any section!
+> こうした課題もあるものの、今後の展開が注目されます。これこそが、現代の開発者に必要なソリューションではないでしょうか。
 
-**After (Humanized):**
-> AI coding assistants can speed up the boring parts of the job. They're great at boilerplate: config files and the little glue code you don't want to write. They can also help you sketch a test, but you still have to read it.
+**修正後（人間らしい文章）:**
+> AIコーディング支援は退屈な部分を速くする。全部じゃない。アーキテクチャはまず無理。
 >
-> The dangerous part is how confident the suggestions look. I've accepted code that compiled and passed lint, then discovered later it missed the point because I stopped paying attention.
+> ボイラープレートは強い。設定ファイル、テスト雛形、繰り返しリファクタリング。「自信満々に間違える」のも強い。コンパイルが通りlintも通り、なのに意図と違うことをする提案を、確認をやめて全部受け入れてしまったことがある。
 >
-> If you treat it like autocomplete and review every line, it's useful. If you use it to avoid thinking, it will help you ship bugs faster.
+> 周囲の話を聞くと大体ふたつに分かれる。「面倒なコードの補完として使いつつ全行見る」か、「古いパターンを出し続けるから切った」か。どちらも合理的に聞こえる。
 >
-> The only real backstop is tests. Without them, you're mostly judging vibes.
+> 生産性の指標はすべりやすい。「30%の提案を承諾」と言われても、承諾は正確さじゃないし、正確さは価値でもない。テストがなければその違いはほぼわからない。
 
-## References
+## アップストリーム同期の仕組み
 
-- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) - Primary source
-- [WikiProject AI Cleanup](https://en.wikipedia.org/wiki/Wikipedia:WikiProject_AI_Cleanup) - Maintaining organization
+本家 [blader/humanizer](https://github.com/blader/humanizer) の変更を定期的に取り込むため、2つのGitHub Actionsワークフローが連携しています。
 
-## Version History
+### Upstream Sync Check
 
-- **2.5.1** - Added a passive-voice / subjectless-fragment rule, raising the total to 29 patterns
-- **2.5.0** - Added patterns for persuasive framing, signposting, and fragmented headers; expanded negative parallelisms to cover tailing negations; tightened wording around em dash overuse; fixed frontmatter wording to use "filler phrases"
-- **2.4.0** - Added voice calibration: match the user's personal writing style from samples
-- **2.3.0** - Added pattern #25: hyphenated word pair overuse
-- **2.2.0** - Added a final "obviously AI generated" audit + second-pass rewrite prompts
-- **2.1.1** - Fixed pattern #18 example (curly quotes vs straight quotes)
-- **2.1.0** - Added before/after examples for all 24 patterns
-- **2.0.0** - Complete rewrite based on raw Wikipedia article content
-- **1.0.0** - Initial release
+**役割**: アップストリームの変更を検知して通知する
 
-## License
+- **トリガー**: 毎日 18:00 JST（スケジュール）または手動実行
+- **処理**: `.github/upstream-state.json` の最終同期SHAと本家の最新SHAを比較し、差分があれば `upstream-sync` ラベル付きIssueを作成。IssueのコメントでClaudeに日本語適応を依頼する
+
+### Update Upstream State After Sync PR Merged
+
+**役割**: 同期PRがマージされたあとに状態を更新する
+
+- **トリガー**: `upstream-sync` ラベル付きのPRがマージされたとき
+- **処理**: PRのdescriptionに埋め込まれた `<!-- upstream-new-sha: ... -->` を読み取り、`.github/upstream-state.json` の `last_synced_sha` を更新してコミット
+
+### 全体の流れ
+
+```
+[毎日 18:00 JST] Upstream Sync Check 実行
+  ↓ 差分あり
+Issue作成 → Claudeが日本語適応してPRを作成
+  ↓ PRマージ
+Update Upstream State After Sync PR Merged
+  ↓ upstream-state.json を更新
+  ↓ 翌日
+Upstream Sync Check が「変更なし」と判定 → Issue作成されない
+```
+
+## 参考文献
+
+- [Wikipedia: Signs of AI writing](https://en.wikipedia.org/wiki/Wikipedia:Signs_of_AI_writing) — 一次ソース
+- [Zenn: m0370「humanizer をベースに日本語向けの設定に改良した話」](https://zenn.dev/m0370/articles/205c9340a418c3) — 日本語パターンの出典
+
+## バージョン履歴
+
+- **3.0.0** — 日本語特化版に完全書き換え。20の日本語向けパターン、全文日本語化、声のキャリブレーション日本語対応
+- **2.5.1** — 受動態・主語省略ルールを追加し、29パターンに
+- **2.5.0** — 説得的フレーミング・サインポスティング・断片的ヘッダーパターン追加
+- **2.4.0** — 声のキャリブレーション機能追加
+- **2.3.0** — パターン#25: ハイフン付き複合語の多用を追加
+- **2.2.0** — 最終「AIっぽいか」監査と二度目の書き換えパスを追加
+- **2.1.0** — 全24パターンにBefore/After例を追加
+- **2.0.0** — Wikipedia記事原文をベースに全面改訂
+- **1.0.0** — 初回リリース
+
+## ライセンス
 
 MIT
