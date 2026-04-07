@@ -26,7 +26,7 @@
 推奨（Claude Codeスキルディレクトリに直接クローン）:
 ```bash
 mkdir -p ~/.claude/skills
-git clone https://github.com/m0370/humanizer-ja.git ~/.claude/skills/humanizer-ja
+git clone https://github.com/cotapon/humanizer-ja.git ~/.claude/skills/humanizer-ja
 ```
 
 手動インストール/更新（スキルファイルのみ）:

@@ -10,7 +10,7 @@ Claude Codeのスキルディレクトリに直接クローン:
 
 ```bash
 mkdir -p ~/.claude/skills
-git clone https://github.com/m0370/humanizer-ja.git ~/.claude/skills/humanizer-ja
+git clone https://github.com/cotapon/humanizer-ja.git ~/.claude/skills/humanizer-ja
 ```
 
 すでにこのリポジトリをクローン済みの場合は手動でコピー:
@@ -26,7 +26,7 @@ OpenCodeのスキルディレクトリに直接クローン:
 
 ```bash
 mkdir -p ~/.config/opencode/skills
-git clone https://github.com/m0370/humanizer-ja.git ~/.config/opencode/skills/humanizer-ja
+git clone https://github.com/cotapon/humanizer-ja.git ~/.config/opencode/skills/humanizer-ja
 ```
 
 すでにこのリポジトリをクローン済みの場合は手動でコピー:
