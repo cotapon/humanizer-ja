@@ -129,4 +129,5 @@ jobs:
 
       - name: No changes found
         if: steps.check.outputs.has_changes == 'false'
-        run: echo "No upstream changes detected. Last synced SHA: ${{ steps.check.outputs.last_sha }}"
+        run: |
+          echo "No upstream changes detected. Last synced SHA: ${{ steps.check.outputs.last_sha }}"
