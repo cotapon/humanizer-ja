@@ -23,11 +23,13 @@ jobs:
       - name: Extract new SHA from PR body
         id: extract
         run: |
-          PR_BODY="${{ github.event.pull_request.body }}"
-          NEW_SHA=$(echo "$PR_BODY" | grep -oP '(?<=<!-- upstream-new-sha: )\S+(?= -->)' || echo "")
+          NEW_SHA=$(jq -r '.pull_request.body' "$GITHUB_EVENT_PATH" | grep -oP '(?<=<!-- upstream-new-sha: )[0-9a-f]+(?= -->)' || echo "")
 
           if [ -z "$NEW_SHA" ]; then
             echo "Warning: Could not extract upstream-new-sha from PR body. Skipping state update."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          elif ! echo "$NEW_SHA" | grep -qE '^[0-9a-f]{40}$'; then
+            echo "Error: Extracted value is not a valid SHA-1: $NEW_SHA"
             echo "skip=true" >> "$GITHUB_OUTPUT"
           else
             echo "new_sha=$NEW_SHA" >> "$GITHUB_OUTPUT"
@@ -36,8 +38,10 @@ jobs:
 
       - name: Update upstream-state.json
         if: steps.extract.outputs.skip == 'false'
+        env:
+          NEW_SHA: ${{ steps.extract.outputs.new_sha }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
-          NEW_SHA="${{ steps.extract.outputs.new_sha }}"
           NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
 
           jq --arg sha "$NEW_SHA" --arg ts "$NOW" \
@@ -48,5 +52,5 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add .github/upstream-state.json
-          git commit -m "chore: update upstream-state to ${NEW_SHA:0:7} after sync PR #${{ github.event.pull_request.number }} merged"
+          git commit -m "chore: update upstream-state to ${NEW_SHA:0:7} after sync PR #${PR_NUMBER} merged"
           git push

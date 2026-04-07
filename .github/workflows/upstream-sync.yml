@@ -73,10 +73,10 @@ jobs:
           steps.existing.outputs.issue_number != ''
         env:
           GH_TOKEN: ${{ github.token }}
+          OLD_SHA: ${{ steps.check.outputs.last_sha }}
+          NEW_SHA: ${{ steps.check.outputs.new_sha }}
+          ISSUE: ${{ steps.existing.outputs.issue_number }}
         run: |
-          OLD_SHA="${{ steps.check.outputs.last_sha }}"
-          NEW_SHA="${{ steps.check.outputs.new_sha }}"
-          ISSUE="${{ steps.existing.outputs.issue_number }}"
           COMPARE_URL="https://github.com/blader/humanizer/compare/${OLD_SHA:0:7}...${NEW_SHA:0:7}"
 
           gh issue comment "$ISSUE" \
@@ -93,11 +93,10 @@ jobs:
           steps.existing.outputs.issue_number == ''
         env:
           GH_TOKEN: ${{ secrets.PAT_TOKEN }}
+          OLD_SHA: ${{ steps.check.outputs.last_sha }}
+          NEW_SHA: ${{ steps.check.outputs.new_sha }}
         run: |
           set -e
-
-          OLD_SHA="${{ steps.check.outputs.last_sha }}"
-          NEW_SHA="${{ steps.check.outputs.new_sha }}"
           COMPARE_URL="https://github.com/blader/humanizer/compare/${OLD_SHA:0:7}...${NEW_SHA:0:7}"
 
           # コミット一覧と変更ファイルを取得
@@ -144,5 +143,7 @@ jobs:
 
       - name: No changes found
         if: steps.check.outputs.has_changes == 'false'
+        env:
+          LAST_SHA: ${{ steps.check.outputs.last_sha }}
         run: |
-          echo "No upstream changes detected. Last synced SHA: ${{ steps.check.outputs.last_sha }}"
+          echo "No upstream changes detected. Last synced SHA: $LAST_SHA"
