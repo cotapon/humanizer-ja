@@ -1,0 +1,52 @@
+name: Update Upstream State After Sync PR Merged
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  update-state:
+    if: |
+      github.event.pull_request.merged == true &&
+      contains(toJson(github.event.pull_request.labels), 'upstream-sync')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Extract new SHA from PR body
+        id: extract
+        run: |
+          PR_BODY="${{ github.event.pull_request.body }}"
+          NEW_SHA=$(echo "$PR_BODY" | grep -oP '(?<=<!-- upstream-new-sha: )\S+(?= -->)' || echo "")
+
+          if [ -z "$NEW_SHA" ]; then
+            echo "Warning: Could not extract upstream-new-sha from PR body. Skipping state update."
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "new_sha=$NEW_SHA" >> "$GITHUB_OUTPUT"
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Update upstream-state.json
+        if: steps.extract.outputs.skip == 'false'
+        run: |
+          NEW_SHA="${{ steps.extract.outputs.new_sha }}"
+          NOW=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          jq --arg sha "$NEW_SHA" --arg ts "$NOW" \
+            '.last_synced_sha = $sha | .last_synced_at = $ts' \
+            .github/upstream-state.json > /tmp/state.json
+          mv /tmp/state.json .github/upstream-state.json
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .github/upstream-state.json
+          git commit -m "chore: update upstream-state to ${NEW_SHA:0:7} after sync PR #${{ github.event.pull_request.number }} merged"
+          git push
